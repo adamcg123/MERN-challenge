@@ -1,11 +1,15 @@
 const express = require('express');
 // import ApolloServer
 const { ApolloServer } = require('apollo-server-express');
-
 const { authMiddleware } = require('./utils/auth');
+const path = require('path')
+const db = require('./config/connection');
+const routes = require('./routes')
 // import our typeDefs and resolvers
 const { typeDefs, resolvers } = require('./schemas');
-const db = require('./config/connection');
+
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/MERN-challenge";
+
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -16,25 +20,42 @@ const server = new ApolloServer({
   context: authMiddleware,
 });
 
-const startServer = async () => {
-  // create a new Apollo server and pass in our schema data
 
-
-  // Start the Apollo server
-  await server.start();
-
-  // integrate our Apollo server with the Express application as middleware
-  server.applyMiddleware({ app });
-
-  // log where we can go to test our GQL API
-  console.log(`Use GraphQL at http://localhost:${PORT}${server.graphqlPath}`);
-};
-
-// Initialize the Apollo server
-startServer();
+server.applyMiddleware({ app });
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+
+
+
+// const startServer = async () => {
+//   // create a new Apollo server and pass in our schema data
+
+
+//   // Start the Apollo server
+//   await server.start();
+
+//   // integrate our Apollo server with the Express application as middleware
+
+
+//   // log where we can go to test our GQL API
+//   console.log(`Use GraphQL at http://localhost:${PORT}${server.graphqlPath}`);
+// };
+
+// // Initialize the Apollo server
+// startServer();
+
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../client/build/index.html'))
+// });
+
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useFindAndModify: false
+});
+
+app.use(routes);
 
 db.once('open', () => {
   app.listen(PORT, () => {
