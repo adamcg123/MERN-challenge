@@ -1,5 +1,6 @@
 const express = require('express');
 // import ApolloServer
+const mongoose = require('mongoose')
 const { ApolloServer } = require('apollo-server-express');
 const { authMiddleware } = require('./utils/auth');
 const path = require('path')
@@ -7,12 +8,15 @@ const db = require('./config/connection');
 const routes = require('./routes')
 // import our typeDefs and resolvers
 const { typeDefs, resolvers } = require('./schemas');
-
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/MERN-challenge";
 
 
+
 const PORT = process.env.PORT || 3001;
+
+
 const app = express();
+
 
 const server = new ApolloServer({
   typeDefs,
