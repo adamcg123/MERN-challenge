@@ -38,7 +38,7 @@ app.get('*', (req, res) => {
 
 
 
-app.use(routes); //comment this out in the end
+
 
 
 db.once('open', () => {
